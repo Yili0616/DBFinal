@@ -27,6 +27,7 @@ public class Manager {
             System.err.println("Exception: " + e.getMessage());
         }
     }
+    //test
 
     public void logout(ActionEvent actionEvent) {
         window.close();
