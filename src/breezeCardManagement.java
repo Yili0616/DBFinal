@@ -240,7 +240,7 @@ public class breezeCardManagement {
         String user = newUser.getText();
         // check admin or not
 
-        
+
     }
 //    public static ObservableList<Card> initialize() {
 //        ConnectionConfig con = new ConnectionConfig();
