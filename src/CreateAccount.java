@@ -116,7 +116,7 @@ public class CreateAccount {
             Matcher matcher;
             String EMAIL_PATTERN =
                     "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-                            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+                    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
             pattern = Pattern.compile(EMAIL_PATTERN);
             matcher = pattern.matcher(email);
 
