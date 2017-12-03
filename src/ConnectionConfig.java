@@ -34,7 +34,7 @@ public class ConnectionConfig {
         return rs;
 
     }
-    public void update(String sql) {
+    public void update(String sql) throws SQLException {
 
 
         try {
@@ -56,6 +56,7 @@ public class ConnectionConfig {
             }
         } catch(Exception e) {
             System.err.println("Exception: " + e.getMessage());
+            throw new SQLException("sql exception");
         }
 
     }

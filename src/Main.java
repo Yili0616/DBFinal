@@ -33,6 +33,13 @@ public class Main extends Application {
                     e1.printStackTrace();
                 }
             });
+            button2.setOnAction(e -> {
+                try {
+                    CreateAccount.display();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            });
         } catch (Exception e) {
             e.getMessage();
         }
