@@ -12,6 +12,11 @@ public class Card {
         this.value = new SimpleStringProperty(value);
         this.owner = new SimpleStringProperty(owner);
     }
+    public Card(String cardNumber, String value) {
+        this.cardNumber = new SimpleStringProperty(cardNumber);
+        this.value = new SimpleStringProperty(value);
+        this.owner = null;
+    }
 
     //Getters
     public String getCardNumber() {
