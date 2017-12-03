@@ -111,6 +111,7 @@ public class breezeCardManagement {
 //                data.add(row);
                 breezenum= rs.getString("BreezecardNum");
                 while (rs2.next()) {
+                    System.out.println(rs2.getString("BreezecardNum"));
                     if (breezenum.equals(rs2.getString("BreezecardNum"))){
                         temp = true;
                     }
@@ -199,7 +200,7 @@ public class breezeCardManagement {
     }
 
     public void setValue(ActionEvent actionEvent) {
-        int val = Integer.parseInt(newVal.getText().trim());
+        double val = Double.parseDouble(newVal.getText().trim());
 
         if (val > 1000) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -218,7 +219,8 @@ public class breezeCardManagement {
             System.out.println(card.getCardNumber());
             String bnum = card.getCardNumber();
         // Update Breezecard SET Value = 'val' where BreezecardNum = ''
-            String sql = "Update Breezecard SET Value = " + Integer.toString(val) + " where BreezecardNum = " + bnum;
+            String sql = "Update Breezecard SET Value = " + Double.toString(val) + " where BreezecardNum = " + bnum;
+            System.out.println(sql);
             ConnectionConfig con = new ConnectionConfig();
             try {
                 con.update(sql);
@@ -237,8 +239,102 @@ public class breezeCardManagement {
     }
 
     public void transfer(ActionEvent actionEvent) {
-        String user = newUser.getText();
+        String user = newUser.getText().trim();
+        ConnectionConfig con = new ConnectionConfig();
+        ResultSet rs = con.getResult("Select * from USER where Username = '" + user + "' and IsAdmin = 1");
+        ResultSet rs3 = con.getResult("Select * from USER where Username = '" + user + "'");
+        System.out.println("Select * from USER where Username = '" + user + "'");
+        try {
+            if (rs.next()) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Error");
+                alert.setHeaderText("Cannot assign the card to admin!");
+                alert.showAndWait();
+            } else if (!rs3.next()) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Error");
+                alert.setHeaderText("Have to assign the card to some one in the system. ");
+                alert.showAndWait();
+            }
+            else {
+                // check if it is in conflict
+                Card card = tableView.getSelectionModel().getSelectedItem();
+                System.out.println(card.getCardNumber());
+                String bnum = card.getCardNumber();
+                ResultSet rs2 = con.getResult("Select * from Conflict where BreezecardNum = " + bnum);
+                System.out.println("Select * from Conflict where BreezecardNum = " + bnum);
+                //System.out.println(rs2.getString("BreezecardNum"));
+                System.out.println("first");
+                System.out.println(rs2.first());
+                if (rs2.first()) {
+                    System.out.println("here");
+                    String sql = "Update Breezecard SET BelongsTo = '" + user + "' where BreezecardNum = " + bnum;
+                    con.update(sql);
+                    rs2.beforeFirst();
+                    while(rs2.next()) {
+                        String name = rs2.getString("Username");
+                        ResultSet rs4 = con.getResult("Select * from Breezecard where BelongsTo = '"+ name + "'" );
+                        if (!rs4.next()) {
+                            //generate a new card for the user
+                            boolean IsDuplicated = true;
+                            long cardNum = 0;
+                            while (IsDuplicated) {
+
+                                java.util.Random rng = new java.util.Random();
+                                cardNum = (rng.nextLong() % 10000000000000000L);  // ***cardNum and strNum*** is for get a new card!!!!!!
+                                String strNum = Long.toString(cardNum);    // Convert long to string
+                                // cardNum = char(0123456780987654);
+                                ResultSet rs5 = con.getResult("Select * from Breezecard where BreezecardNum = '" + strNum + "'");
+                                if (!rs5.next()) {   // The card number doesn't exist
+                                    IsDuplicated = false;
+                                }
+                            }
+                            String strNum = Long.toString(cardNum);
+                            con.update("Insert into Breezecard(BreezecardNum,BelongsTo) Values('" + strNum + "','" + name + "')");
+
+                        }
+                        System.out.println("Delete from Conflict where BreezecardNum = '" + bnum + "'");
+                        con.update("Delete from Conflict where BreezecardNum = '" + bnum + "'" );
+
+
+
+                    }
+                    try {
+                        con.update(sql);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    //update(new ActionEvent());
+
+
+                } else {
+                    //not in conflict
+
+                    String sql = "Update Breezecard SET BelongsTo = '" + user + "' where BreezecardNum = " + bnum;
+                    System.out.println(sql);
+                    ConnectionConfig con3 = new ConnectionConfig();
+                    try {
+                        con3.update(sql);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    //update(new ActionEvent());
+
+                }
+
+
+            }
+            update(new ActionEvent());
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+
         // check admin or not
+
 
 
     }

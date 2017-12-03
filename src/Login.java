@@ -112,6 +112,10 @@ public class Login {
         try {
             if (!rs.next()) {
                 System.out.println("The account does not exist ");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Error");
+                alert.setHeaderText("The account does not exist");
+                alert.showAndWait();
             } else {
                 rs.beforeFirst();
                 while (rs.next()) {
@@ -133,7 +137,7 @@ public class Login {
                             window.close();
 
                         } else {
-
+                            Passenger2.display(name);
                         }
                     } else {
                         System.out.println("Np");

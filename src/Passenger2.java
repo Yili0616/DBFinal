@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -220,7 +221,7 @@ public class Passenger2 {
     }
 
 
-    public void endatrip() {
+    public void endatrip() throws SQLException {
         List endstation = cb2.getItems();
         String cardnum1 = cb.getValue().toString();
         String SelectEnd = cb2.getValue().toString();
@@ -330,8 +331,16 @@ public class Passenger2 {
             start = startid;
             System.out.println(start);
 
-            con.update("INSERT INTO Trip (Tripfare,BreezecardNum,StartsAt) Values(" + farestr + ",'" + cards + "','" + start + "')");
-            con.update("UPDATE Breezecard SET Value =" + extrastr + " Where BreezecardNum ='" + cards + "'");
+            try {
+                con.update("INSERT INTO Trip (Tripfare,BreezecardNum,StartsAt) Values(" + farestr + ",'" + cards + "','" + start + "')");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                con.update("UPDATE Breezecard SET Value =" + extrastr + " Where BreezecardNum ='" + cards + "'");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             con.close();
             starttrip.setVisible(false);
             starttrip.setDisable(true);
@@ -451,9 +460,9 @@ public class Passenger2 {
         window.close();
     }
 
-    public void managecards(){
-        ManageCards.display(Tname);
-    }
+//    public void managecards(){
+//        ManageCards.display(Tname);
+//    }
 
 }
 

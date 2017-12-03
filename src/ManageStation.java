@@ -1,13 +1,38 @@
+import Station.Station;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
 
-public class ManageStation {
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
+public class ManageStation {
+    @FXML
+    private TableView tableView;
+
+    @FXML
+    public TableColumn<Station, String> colstationName;
+
+    @FXML
+    public TableColumn<Station, String> colstopID;
+
+    @FXML
+    public TableColumn<Station, String> colfare;
+
+    @FXML
+    public TableColumn<Station, String> colstatus;
+
+
+    private ObservableList<Station> data;
 
     public static void display()throws Exception{
         Parent root = FXMLLoader.load(ManageStation.class.getResource("ManageStation.fxml"));
@@ -34,10 +59,47 @@ public class ManageStation {
 
     public void viewStationOnAction(ActionEvent actionEvent) {
         try {
-            ViewStation.display();
+            Station sta = (Station)tableView.getSelectionModel().getSelectedItem();
+            System.out.println(sta.getStopID());
+            String stop = sta.getStopID();
+            ViewStation.display(stop);
 
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
         }
+    }
+
+    public void seeStation(ActionEvent actionEvent) {
+        ConnectionConfig con = new ConnectionConfig();
+        String sql = "select * from Station";
+        ResultSet rs = con.getResult(sql);
+        //ResultSet rs2 = con.getResult("select BreezecardNum from Conflict");
+        //String breezenum;
+        data = FXCollections.observableArrayList();
+        try {
+            while(rs.next()){
+
+
+                data.add(new Station(rs.getString("Name"), rs.getString("StopID"), rs.getString("EnterFare"), rs.getString("ClosedStatus")));
+
+
+
+            }
+
+            colstationName.setCellValueFactory(new PropertyValueFactory<>("stationName"));
+            colstopID.setCellValueFactory(new PropertyValueFactory<>("stopID"));
+            colfare.setCellValueFactory(new PropertyValueFactory<>("Fare"));
+            colstatus.setCellValueFactory(new PropertyValueFactory<>("Status"));
+
+            tableView.setItems(null);
+
+            tableView.setItems(data);
+        } catch (SQLException e) {
+            System.out.println("sql exception");
+            e.printStackTrace();
+        }
+        con.close();
+
+
     }
 }

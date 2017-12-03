@@ -44,7 +44,7 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <ChoiceBox fx:id="cb" disable="true" onAction="#cbclick" prefHeight="9.0" prefWidth="273.0" GridPane.columnIndex="1" />
+      <ChoiceBox fx:id="cb" disable="true" onMouseClicked="#cbclick" prefHeight="9.0" prefWidth="273.0" GridPane.columnIndex="1" />
       <ChoiceBox fx:id="cb1" disable="true" prefHeight="9.0" prefWidth="273.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
       <ChoiceBox fx:id="cb2" disable="true" prefHeight="9.0" prefWidth="273.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
       <Label fx:id="Balancenum" prefHeight="21.0" prefWidth="116.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
