@@ -12,7 +12,7 @@ public class Manager {
 
 
     public static void display() throws Exception {
-        Parent root = FXMLLoader.load(ManageStation.class.getResource("Manage.fxml"));
+        Parent root = FXMLLoader.load(Manager.class.getResource("Manage.fxml"));
 
         window = new Stage();
 

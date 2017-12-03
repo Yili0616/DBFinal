@@ -14,6 +14,7 @@ public class Main extends Application {
     Button button;
     Button button2;
 
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -40,6 +41,7 @@ public class Main extends Application {
                     e1.printStackTrace();
                 }
             });
+
         } catch (Exception e) {
             e.getMessage();
         }

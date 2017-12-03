@@ -35,7 +35,7 @@ public class Login {
     private static Stage window;
 
     public static void display() throws Exception{
-        Parent root = FXMLLoader.load(ManageStation.class.getResource("Login.fxml"));
+        Parent root = FXMLLoader.load(Login.class.getResource("Login.fxml"));
         window = new Stage();
 
         Scene scene = new Scene(root, 600, 500);
