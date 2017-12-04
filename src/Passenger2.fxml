@@ -67,7 +67,7 @@
             <Font size="15.0" />
          </font>
       </Hyperlink>
-      <Button fx:id="viewhistory" mnemonicParsing="false" prefHeight="31.0" prefWidth="117.0" text="View trip history" GridPane.rowIndex="4" />
+      <Button fx:id="viewhistory" mnemonicParsing="false" onAction="#viewhistory" prefHeight="31.0" prefWidth="117.0" text="View trip history" GridPane.rowIndex="4" />
       <Button fx:id="Logout" mnemonicParsing="false" onAction="#logout" prefHeight="32.0" prefWidth="102.0" text="Log out" GridPane.columnIndex="2" GridPane.rowIndex="4" />
       <Label fx:id="alreadytrip" text="Trip in progress" textFill="#16d132" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="2">
          <font>

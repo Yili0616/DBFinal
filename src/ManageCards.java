@@ -86,7 +86,7 @@ public class ManageCards {
                 rs.beforeFirst();
             }
             while (rs.next()) {
-                String cardnumber = rs.getString("BreezecardNum".trim());
+                String cardnumber = rs.getString("BreezecardNum").trim();
                 String cardvalue=rs.getString("Value").trim();
                 ResultSet rs1 = con.getResult("Select * from Conflict where BreezecardNum =" + "'" + cardnumber + "'");
                 if (!rs1.next()) {
@@ -119,13 +119,13 @@ public class ManageCards {
         succeed.setVisible(false);
         succeedfund.setVisible(false);
         String bum=cardnum.getText().trim();
-        if(bum==null){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Please fill in the card number");
-            alert.showAndWait();
-            return;
-        }
+//        if(bum==null){
+//            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//            alert.setTitle("Error");
+//            alert.setHeaderText("Please fill in the card number");
+//            alert.showAndWait();
+//            return;
+//        }
         if(bum.length()!=16){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
@@ -219,13 +219,13 @@ public class ManageCards {
         succeed.setVisible(false);
         succeedfund.setVisible(false);
         String bum=cardnum.getText().trim();
-        if(bum==null){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Please fill in the card number");
-            alert.showAndWait();
-            return;
-        }
+//        if(bum==null){
+//            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//            alert.setTitle("Error");
+//            alert.setHeaderText("Please fill in the card number");
+//            alert.showAndWait();
+//            return;
+//        }
         if(bum.length()!=16){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
@@ -291,13 +291,13 @@ public class ManageCards {
     public void addfund(){
         succeedfund.setVisible(false);
         String bnum=chargecard.getText().trim();
-        if(bnum==null){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Please fill in the card number");
-            alert.showAndWait();
-            return;
-        }
+//        if(bnum==null){
+//            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//            alert.setTitle("Error");
+//            alert.setHeaderText("Please fill in the card number");
+//            alert.showAndWait();
+//            return;
+//        }
         if(bnum.length()!=16){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
