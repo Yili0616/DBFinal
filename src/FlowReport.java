@@ -111,19 +111,25 @@ public class FlowReport {
 //        }
 //        return true;
         ConnectionConfig con = new ConnectionConfig();
+        System.out.println("SELECT Station.StopID, Station.Name, COUNT( Station.StopID ) As CountIn, SUM(Trip.Tripfare) As Rev\n" +
+                "FROM Trip\n" +
+                "INNER JOIN Station ON Trip.StartsAt = Station.StopID\n" +
+                "WHERE StartTime >= '" + startTime + "'\n" +
+                "AND StartTime <= '" + endTime + "'\n" +
+                "GROUP BY StartsAt");
         // Get all the "start" station that sends out passengers in the time interval
-        ResultSet start = con.getResult("SELECT Station.StopID, Station.Name, COUNT( Station.StopID ) As CountIn, SUM(Station.EnterFare) As Rev\n" +
+        ResultSet start = con.getResult("SELECT Station.StopID, Station.Name, COUNT( Station.StopID ) As CountIn, SUM(Trip.Tripfare) As Rev\n" +
                 "FROM Trip\n" +
                 "INNER JOIN Station ON Trip.StartsAt = Station.StopID\n" +
                 "WHERE StartTime >= '" + startTime + "'\n" +
                 "AND StartTime <= '" + endTime + "'\n" +
                 "GROUP BY StartsAt");
-        System.out.println("SELECT Station.StopID, Station.Name, COUNT( Station.StopID ) As CountIn, SUM(Station.EnterFare) As Rev\n" +
-                "FROM Trip\n" +
-                "INNER JOIN Station ON Trip.StartsAt = Station.StopID\n" +
-                "WHERE StartTime >= '" + startTime + "'\n" +
-                "AND StartTime <= '" + endTime + "'\n" +
-                "GROUP BY StartsAt");
+//        System.out.println("SELECT Station.StopID, Station.Name, COUNT( Station.StopID ) As CountIn, SUM(Station.EnterFare) As Rev\n" +
+//                "FROM Trip\n" +
+//                "INNER JOIN Station ON Trip.StartsAt = Station.StopID\n" +
+//                "WHERE StartTime >= '" + startTime + "'\n" +
+//                "AND StartTime <= '" + endTime + "'\n" +
+//                "GROUP BY StartsAt");
 
         // Get all the corresponding "end" station in the time interval
 //        ResultSet end = con1.getResult("SELECT Station.StopID, Station.Name, COUNT(Station.StopID) As CountOut" +
@@ -142,7 +148,7 @@ public class FlowReport {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText("Error Operation!");
-                alert.setContentText("Your start time is later than your end time!");
+                alert.setContentText("There is no trip");
                 alert.showAndWait();
             }
 //            System.out.println(start.next());
@@ -175,11 +181,13 @@ public class FlowReport {
             }
 
         } catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error Operation!");
-            alert.setContentText("You input time is in the wrong format!");
-            alert.showAndWait();
+            System.err.println(e.getMessage());
+//            System.out.println("wrong!!!!!!!!!!!!!!!!!!!");
+//            Alert alert = new Alert(Alert.AlertType.ERROR);
+//            alert.setTitle("Error");
+//            alert.setHeaderText("Error Operation!");
+//            alert.setContentText("You input time is in the wrong format!");
+//            alert.showAndWait();
         }
 
 //            // TEST!!----------------------
@@ -202,6 +210,7 @@ public class FlowReport {
     // If click on "Reset" button, clear all the contents in this page
     public void reset(ActionEvent actionEvent) {
         StartTime.clear();
+        report.setItems(null);
         EndTime.clear();
 //        for (int i = 0; i < report.getItems().size(); i++) {
 //            report.getItems().clear();

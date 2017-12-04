@@ -1,11 +1,8 @@
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import javax.swing.text.TableView;
 
 public class Manager {
     private static Stage window;
@@ -46,4 +43,22 @@ public class Manager {
     }
 
 
+    public void passengerFlow(ActionEvent actionEvent) {
+        try {
+            FlowReport.display();
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+
+        }
+
+    }
+
+    public void suspendedCard(ActionEvent actionEvent) {
+        try {
+            SuspendCard.display();
+
+        } catch (Exception e) {
+            System.err.println("Exception: "+ e.getMessage());
+        }
+    }
 }

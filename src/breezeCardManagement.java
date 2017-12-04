@@ -93,6 +93,7 @@ public class breezeCardManagement {
     public void update(ActionEvent actionEvent) {
         ConnectionConfig con = new ConnectionConfig();
         String sql = getSql();
+        System.out.println(sql);
         ResultSet rs = con.getResult(sql);
         ResultSet rs2 = con.getResult("select BreezecardNum from Conflict");
         String breezenum;
@@ -174,7 +175,7 @@ public class breezeCardManagement {
             }
 
 
-            if (showsus.isSelected()) {
+            if (!showsus.isSelected()) {
 
                 sql += " NOT \n" +
                         "EXISTS (\n" +

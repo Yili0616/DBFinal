@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -282,7 +283,11 @@ public class Passenger2 {
 
         end = endid.trim();
         System.out.println(end);
-        con.update("UPDATE Trip SET EndsAt = '" + end + "' Where(BreezecardNum='" + cardnum1 + "' AND EndsAt IS NULL)");
+        try {
+            con.update("UPDATE Trip SET EndsAt = '" + end + "' Where(BreezecardNum='" + cardnum1 + "' AND EndsAt IS NULL)");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         cb.setDisable(false);
         cb1.setDisable(false);
         cb2.setDisable(true);
@@ -387,8 +392,16 @@ public class Passenger2 {
             start = startid;
             System.out.println(start);
 
-            con.update("INSERT INTO Trip (Tripfare,BreezecardNum,StartsAt) Values(" + farestr + ",'" + cards + "','" + start + "')");
-            con.update("UPDATE Breezecard SET Value =" + extrastr + " Where BreezecardNum ='" + cards + "'");
+            try {
+                con.update("INSERT INTO Trip (Tripfare,BreezecardNum,StartsAt) Values(" + farestr + ",'" + cards + "','" + start + "')");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                con.update("UPDATE Breezecard SET Value =" + extrastr + " Where BreezecardNum ='" + cards + "'");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             con.close();
             starttrip.setVisible(false);
             starttrip.setDisable(true);
