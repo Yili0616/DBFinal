@@ -65,7 +65,7 @@ public class ViewStation {
         }
     }
     public void refresh(ActionEvent actionEvent) {
-        String sql = "SELECT * FROM Station NATURAL JOIN BusStationIntersection where StopID = '"+sID + "'";
+        String sql = "SELECT * FROM Station NATURAL LEFT OUTER JOIN BusStationIntersection where StopID = '"+sID + "'";
         String sql2 = "Select * from Station where StopID = '" + sID + "'";
         ConnectionConfig con = new ConnectionConfig();
         ResultSet rs = con.getResult(sql);
@@ -74,7 +74,10 @@ public class ViewStation {
         try {
             rs.next();
             rs2.next();
-            String Intersection = rs.getString("Intersection");
+            String Intersection="";
+            if(rs.getString("Intersection")!=null) {
+                Intersection = rs.getString("Intersection");
+            }
             String name = rs2.getString("Name");
             String fare = rs2.getString("EnterFare");
             String type = rs2.getString("ClosedStatus");
