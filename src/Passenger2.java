@@ -216,7 +216,7 @@ public class Passenger2 {
             } catch (Exception f) {
                 System.err.println("Exception7: " + f.getMessage());
             }
-            //show end station
+            //in trip show end station
             cb2.setDisable(false);
             cb2.setItems(FXCollections.observableArrayList(endstation));
             endtrip.setDisable(false);
@@ -224,6 +224,7 @@ public class Passenger2 {
             alreadytrip.setVisible(true);
             Balancenum.setVisible(false);
         } else {
+            //not in trip
             cb1.setDisable(false);
             cb.setDisable(false);
             cb2.setDisable(true);
@@ -512,6 +513,8 @@ public class Passenger2 {
     public void managecards(){
         ManageCards.display(Tname);
     }
+
+    public void viewhistory(){TripHistory.display(Tname);}
 
 }
 
