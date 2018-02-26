@@ -61,21 +61,23 @@ public class FlowReport {
     @FXML
     public Button reset;
     @FXML
-    public TableView<ReportInfo> report;
+    public TableView<Record> report;
     @FXML
-    public TableColumn<ReportInfo, String> columnStationName;
+    public TableColumn<Record, String> columnStationName;
     @FXML
-    public TableColumn<ReportInfo, String> columnPassengerIn;
+    public TableColumn<Record, String> columnPassengerIn;
     @FXML
-    public TableColumn<ReportInfo, String> columnPassengerOut;
+    public TableColumn<Record, String> columnPassengerOut;
     @FXML
-    public TableColumn<ReportInfo, String> columnFlow;
+    public TableColumn<Record, String> columnFlow;
     @FXML
-    public TableColumn<ReportInfo, String> columnRevenue;
+    public TableColumn<Record, String> columnRevenue;
 
-    public ObservableList<ReportInfo> data;
+    public ObservableList<Record> data;
 
     private static Stage Window;
+
+    ResultSet rs;
 
     public static void display() {
         Parent root = null;
@@ -99,6 +101,98 @@ public class FlowReport {
 
         String startTime = StartTime.getText();
         String endTime = EndTime.getText();
+        if (startTime.length()== 0 && endTime.length()== 0) {
+            System.out.println("hello");
+            ConnectionConfig con = new ConnectionConfig();
+            String sql1 = "(SELECT Name, PassengerIn, PassengerOut, Revenue "
+                    + "FROM (SELECT StopID,Name, COUNT(*) AS PassengerIn,Sum(TripFare) AS Revenue "
+                    + "FROM Trip JOIN Station ON Trip.StartsAt=Station.StopID "
+
+                    + " GROUP BY StartsAt) AS S "
+                    + "NATURAL LEFT OUTER JOIN "
+                    + "(SELECT StopID,Name, COUNT(*) AS PassengerOut "
+                    + "FROM Trip JOIN Station ON Trip.EndsAt=Station.StopID "
+                    + "GROUP BY EndsAt) AS F "
+                    + "WHERE Name IS NOT NULL) "
+                    + "UNION(" +
+                    "SELECT Name, PassengerIn, PassengerOut, Revenue "
+                    + "FROM (SELECT StopID,Name, COUNT(*) AS PassengerIn,Sum(TripFare) AS Revenue "
+                    + "FROM Trip JOIN Station ON Trip.StartsAt=Station.StopID "
+
+                    + " GROUP BY StartsAt) AS S "
+                    + "NATURAL RIGHT OUTER JOIN "
+                    + "(SELECT StopID,Name, COUNT(*) AS PassengerOut "
+                    + "FROM Trip JOIN Station ON Trip.EndsAt=Station.StopID "
+                    + "GROUP BY EndsAt) AS F "
+                    + "WHERE Name IS NOT NULL)";
+            rs = con.getResult(sql1);
+
+            data = FXCollections.observableArrayList();
+
+
+        } else if (startTime.length()!= 0 && endTime.length() == 0){
+            System.out.println("hello2");
+            ConnectionConfig con = new ConnectionConfig();
+            String sql1 = "(SELECT Name, PassengerIn, PassengerOut, Revenue "
+                    + "FROM (SELECT StopID,Name, COUNT(*) AS PassengerIn,Sum(TripFare) AS Revenue "
+                    + "FROM Trip JOIN Station ON Trip.StartsAt=Station.StopID "
+                    + "WHERE StartTime>='" + startTime + "' AND StartTime<='" + endTime + "' "
+                    + " GROUP BY StartsAt) AS S "
+                    + "NATURAL LEFT OUTER JOIN "
+                    + "(SELECT StopID,Name, COUNT(*) AS PassengerOut "
+                    + "FROM Trip JOIN Station ON Trip.EndsAt=Station.StopID "
+                    + " WHERE StartTime>=' " + startTime + "'  "
+                    + "GROUP BY EndsAt) AS F "
+                    + "WHERE Name IS NOT NULL) "
+                    + "UNION(" +
+                    "SELECT Name, PassengerIn, PassengerOut, Revenue "
+                    + "FROM (SELECT StopID,Name, COUNT(*) AS PassengerIn,Sum(TripFare) AS Revenue "
+                    + "FROM Trip JOIN Station ON Trip.StartsAt=Station.StopID "
+                    + "WHERE StartTime>='" + startTime + "' "
+                    + " GROUP BY StartsAt) AS S "
+                    + "NATURAL RIGHT OUTER JOIN "
+                    + "(SELECT StopID,Name, COUNT(*) AS PassengerOut "
+                    + "FROM Trip JOIN Station ON Trip.EndsAt=Station.StopID "
+                    + "WHERE StartTime>= '" + startTime + " ' "
+                    + "GROUP BY EndsAt) AS F "
+                    + "WHERE Name IS NOT NULL)";
+            System.out.println(sql1);
+            rs = con.getResult(sql1);
+
+            data = FXCollections.observableArrayList();
+
+
+        } else if  (startTime.length() == 0 && endTime.length() != 0) {
+            ConnectionConfig con = new ConnectionConfig();
+            String sql1 = "(SELECT Name, PassengerIn, PassengerOut, Revenue "
+                    + "FROM (SELECT StopID,Name, COUNT(*) AS PassengerIn,Sum(TripFare) AS Revenue "
+                    + "FROM Trip JOIN Station ON Trip.StartsAt=Station.StopID "
+                    + "WHERE  StartTime<='" + endTime + "' "
+                    + " GROUP BY StartsAt) AS S "
+                    + "NATURAL LEFT OUTER JOIN "
+                    + "(SELECT StopID,Name, COUNT(*) AS PassengerOut "
+                    + "FROM Trip JOIN Station ON Trip.EndsAt=Station.StopID "
+                    + " WHERE  StartTime<='" + endTime + "' "
+                    + "GROUP BY EndsAt) AS F "
+                    + "WHERE Name IS NOT NULL) "
+                    + "UNION(" +
+                    "SELECT Name, PassengerIn, PassengerOut, Revenue "
+                    + "FROM (SELECT StopID,Name, COUNT(*) AS PassengerIn,Sum(TripFare) AS Revenue "
+                    + "FROM Trip JOIN Station ON Trip.StartsAt=Station.StopID "
+                    + "WHERE  StartTime<='" + endTime + "'"
+                    + " GROUP BY StartsAt) AS S "
+                    + "NATURAL RIGHT OUTER JOIN "
+                    + "(SELECT StopID,Name, COUNT(*) AS PassengerOut "
+                    + "FROM Trip JOIN Station ON Trip.EndsAt=Station.StopID "
+                    + "WHERE StartTime<='" + endTime + "' "
+                    + "GROUP BY EndsAt) AS F "
+                    + "WHERE Name IS NOT NULL)";
+            rs = con.getResult(sql1);
+
+            data = FXCollections.observableArrayList();
+
+        }
+        else{
 
 //        // Check if the input format is correct
 //
@@ -110,33 +204,34 @@ public class FlowReport {
 //            return false;
 //        }
 //        return true;
-        ConnectionConfig con = new ConnectionConfig();
-        String sql1 = "(SELECT Name, PassengerIn, PassengerOut, Revenue "
-        + "FROM (SELECT StopID,Name, COUNT(*) AS PassengerIn,Sum(TripFare) AS Revenue "
-        + "FROM Trip JOIN Station ON Trip.StartsAt=Station.StopID "
-        + "WHERE StartTime>='"+startTime+ "' AND StartTime<='" +endTime +"' "
-        +" GROUP BY StartsAt) AS S "
-        + "NATURAL LEFT OUTER JOIN "
-        + "(SELECT StopID,Name, COUNT(*) AS PassengerOut "
-        + "FROM Trip JOIN Station ON Trip.EndsAt=Station.StopID "
-        +" WHERE StartTime>=' "+startTime+ "' AND StartTime<='" + endTime + "' "
-        + "GROUP BY EndsAt) AS F "
-        + "WHERE Name IS NOT NULL) "
-+ ")UNION(" +
-          "SELECT Name, PassengerIn, PassengerOut, Revenue "
-                        + "FROM (SELECT StopID,Name, COUNT(*) AS PassengerIn,Sum(TripFare) AS Revenue "
-                        + "FROM Trip JOIN Station ON Trip.StartsAt=Station.StopID "
-                        + "WHERE StartTime>='"+ startTime+ "' AND StartTime<='"+ endTime+ "'"
-                       + " GROUP BY StartsAt) AS S "
-        + "NATURAL RIGHT OUTER JOIN "
-        + "(SELECT StopID,Name, COUNT(*) AS PassengerOut "
-        + "FROM Trip JOIN Station ON Trip.EndsAt=Station.StopID "
-        + "WHERE StartTime>= '"+startTime + "'AND StartTime<='"+ endTime+ "' "
-         + "GROUP BY EndsAt) AS F "
-        + "WHERE Name IS NOT NULL)";
+            ConnectionConfig con = new ConnectionConfig();
+            String sql1 = "(SELECT Name, PassengerIn, PassengerOut, Revenue "
+                    + "FROM (SELECT StopID,Name, COUNT(*) AS PassengerIn,Sum(TripFare) AS Revenue "
+                    + "FROM Trip JOIN Station ON Trip.StartsAt=Station.StopID "
+                    + "WHERE StartTime>='" + startTime + "' AND StartTime<='" + endTime + "' "
+                    + " GROUP BY StartsAt) AS S "
+                    + "NATURAL LEFT OUTER JOIN "
+                    + "(SELECT StopID,Name, COUNT(*) AS PassengerOut "
+                    + "FROM Trip JOIN Station ON Trip.EndsAt=Station.StopID "
+                    + " WHERE StartTime>=' " + startTime + "' AND StartTime<='" + endTime + "' "
+                    + "GROUP BY EndsAt) AS F "
+                    + "WHERE Name IS NOT NULL) "
+                    + "UNION(" +
+                    "SELECT Name, PassengerIn, PassengerOut, Revenue "
+                    + "FROM (SELECT StopID,Name, COUNT(*) AS PassengerIn,Sum(TripFare) AS Revenue "
+                    + "FROM Trip JOIN Station ON Trip.StartsAt=Station.StopID "
+                    + "WHERE StartTime>='" + startTime + "' AND StartTime<='" + endTime + "'"
+                    + " GROUP BY StartsAt) AS S "
+                    + "NATURAL RIGHT OUTER JOIN "
+                    + "(SELECT StopID,Name, COUNT(*) AS PassengerOut "
+                    + "FROM Trip JOIN Station ON Trip.EndsAt=Station.StopID "
+                    + "WHERE StartTime>= '" + startTime + "'AND StartTime<='" + endTime + "' "
+                    + "GROUP BY EndsAt) AS F "
+                    + "WHERE Name IS NOT NULL)";
+            rs = con.getResult(sql1);
 
-        ResultSet rs1 = con.getResult(sql1);
-
+            data = FXCollections.observableArrayList();
+        }
 
 
         //        System.out.println("SELECT Station.StopID, Station.Name, COUNT( Station.StopID ) As CountIn, SUM(Trip.Tripfare) As Rev\n" +
@@ -169,73 +264,44 @@ public class FlowReport {
 
 
 //        System.out.println("SELECT Station.StopID, Station.Name, COUNT(Station.StopID) As CountOut FROM Trip INNER JOIN Station ON Trip.EndsAt = Station.StopID WHERE StartTime >= '"+ startTime + "'AND StartTime <= '" + endTime + "'GROUP BY StartsAt");
-        ResultSet rs = con.getResult(sql1);
-        data = FXCollections.observableArrayList();
-        try {
 
-//            System.out.println("try!");
-//            if (!start.next()) {
-//                Alert alert = new Alert(Alert.AlertType.ERROR);
-//                alert.setTitle("Error");
-//                alert.setHeaderText("Error Operation!");
-//                alert.setContentText("There is no trip");
-//                alert.showAndWait();
-//            }
-//            System.out.println(start.next());
-//            System.out.println(end.next());
-//            else {
-//                start.beforeFirst();
-//                while (start.next()) {
-//                    end.next();
-//                    // Calculate passenger Flow
-//                    System.out.println("create table!");
-//                    int a = start.getInt("CountIn");
-//                    System.out.println(a);
-//                    int b = end.getInt("CountOut");
-//                    System.out.println(b);
-//                    int CalcFlow = a - b;
-////                int CalcFlow = start.getInt("countIn") - end.getInt("countOut");
-//                    System.out.println("flow:" + CalcFlow);
-//
-//                    data.add(new ReportInfo(start.getString("Name"), start.getInt("CountIn"),  end.getInt("CountOut"), CalcFlow, start.getDouble("Rev")));
-//
-//                    columnStationName.setCellValueFactory(new PropertyValueFactory<>("StationName"));
-//                    columnPassengerIn.setCellValueFactory(new PropertyValueFactory<>("PassengerIn"));
-//                    columnPassengerOut.setCellValueFactory(new PropertyValueFactory<>("PassengerOut"));
-//                    columnFlow.setCellValueFactory(new PropertyValueFactory<>("Flow"));
-//                    columnRevenue.setCellValueFactory(new PropertyValueFactory<>("Revenue"));
-//
-//                    report.setItems(null);
-//                    report.setItems(data);
-//                }
-//            }
+            try {
+                while (rs.next()) {
+                    String temp1 = rs.getString("PassengerIn");
+                    String temp2 = rs.getString("PassengerOut");
+                    String temp3 = rs.getString("Revenue");
 
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-//            System.out.println("wrong!!!!!!!!!!!!!!!!!!!");
-//            Alert alert = new Alert(Alert.AlertType.ERROR);
-//            alert.setTitle("Error");
-//            alert.setHeaderText("Error Operation!");
-//            alert.setContentText("You input time is in the wrong format!");
-//            alert.showAndWait();
-        }
+                    if (temp1 == null) {
+                        temp1 = "0";
+                    }
+                    if (temp2 == null) {
+                        temp2 = "0";
+                    }
+                    if (temp3 == null) {
+                        temp3 = "0.00";
+                    }
+                    int t1 = Integer.parseInt(temp1);
+                    int t2 = Integer.parseInt(temp2);
+                    String result = Integer.toString(t1 - t2);
+                    data.add(new Record(rs.getString("Name"), temp1, temp2, result, temp3));
 
-//            // TEST!!----------------------
-//            ResultSetMetaData startmd = start.getMetaData();
-//            int columnNum = startmd.getColumnCount();
-//            while (start.next()) {
-//                for (int i = 1; i <= columnNum; i++) {
-//                    if (i > 1) System.out.println(", ");
-//                    String attribute = start.getString(i);
-//                    System.out.println(attribute + "" + startmd.getColumnName(i));
-//                }
-//                System.out.println("");
-//            }
+                    columnStationName.setCellValueFactory(new PropertyValueFactory<>("Name"));
+                    columnPassengerIn.setCellValueFactory(new PropertyValueFactory<>("PassengerIn"));
+                    columnPassengerOut.setCellValueFactory(new PropertyValueFactory<>("PassengerOut"));
+                    columnFlow.setCellValueFactory(new PropertyValueFactory<>("res"));
+                    columnRevenue.setCellValueFactory(new PropertyValueFactory<>("Revenue"));
 
-        con.close();
 
+                    report.setItems(null);
+
+                    report.setItems(data);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
     }
+
 
     // If click on "Reset" button, clear all the contents in this page
     public void reset(ActionEvent actionEvent) {

@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Random;
 
 
 public class breezeCardManagement {
@@ -281,10 +282,11 @@ public class breezeCardManagement {
                             long cardNum = 0;
                             while (IsDuplicated) {
 
-                                java.util.Random rng = new java.util.Random();
-                                cardNum = (rng.nextLong() % 10000000000000000L);  // ***cardNum and strNum*** is for get a new card!!!!!!
-                                String strNum = Long.toString(cardNum);    // Convert long to string
-                                // cardNum = char(0123456780987654);
+                                Random random = new Random();
+                                int rand16Digt = random.nextInt(16);
+
+
+                                String strNum = Long.toString(rand16Digt);
                                 ResultSet rs5 = con.getResult("Select * from Breezecard where BreezecardNum = '" + strNum + "'");
                                 if (!rs5.next()) {   // The card number doesn't exist
                                     IsDuplicated = false;
